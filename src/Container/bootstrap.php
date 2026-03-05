@@ -7,6 +7,7 @@ use App\Azhoras\Auth\Repositories\HourBankRepository;
 use App\Azhoras\Auth\Repositories\UserRepository;
 use App\Azhoras\Http\Middleware\ManagerMiddleware;
 use App\Azhoras\Http\RequestHandler;
+use App\Azhoras\Infrastructure\Mail\Mailer;
 
 $container = new Container();
 
@@ -19,5 +20,7 @@ $container->bind(ManagerMiddleware::class, fn() => new ManagerMiddleware());
 
 $request = new RequestHandler();
 $container->bind(RequestHandler::class, fn() => $request);
+
+$container->bind(Mailer::class, fn() => new Mailer());
 
 return $container;

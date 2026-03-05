@@ -14,6 +14,14 @@ class UserRepository implements UserRepositoryInterface
         $this->pdo = Connection::getInstance();
     }
 
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $result = $stmt->fetch();
+        return $result ?: null;
+    }
+
     public function findByEmail(string $email): ?array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
@@ -58,6 +66,16 @@ class UserRepository implements UserRepositoryInterface
         LEFT JOIN hour_bank_balance b ON b.user_id = u.id
         GROUP BY u.id
         ORDER BY u.name ASC
+    ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function findManagers(): array
+    {
+        $stmt = $this->pdo->prepare("
+        SELECT id, name, email FROM users
+        WHERE role IN ('manager', 'admin')
     ");
         $stmt->execute();
         return $stmt->fetchAll();

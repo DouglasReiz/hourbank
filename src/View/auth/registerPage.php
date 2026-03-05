@@ -1,8 +1,8 @@
 <!-- Adicione no topo do register.php, antes do <main> -->
 <?php if (!empty($errors)): ?>
-    <div class="errors">
+    <div class="error">
         <?php foreach ($errors as $error): ?>
-            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+            <p ><?= htmlspecialchars($error) ?></p>
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
@@ -15,12 +15,12 @@
     <form class="form-grid" method="POST" action="/register/store">
         <div class="form-group">
             <label for="nome">Nome Completo</label>
-            <input type="text" id="nome" name="nome" placeholder="Ex: Douglas Alves" required>
+            <input type="text" id="nome" name="nome" placeholder="Ex: John Doe" required>
         </div>
 
         <div class="form-group">
             <label for="cpf">CPF</label>
-            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
         </div>
 
         <div class="form-group full-width">
@@ -59,3 +59,5 @@
         </div>
     </form>
 </main>
+
+<script src="/assets/js/register.js"></script>
