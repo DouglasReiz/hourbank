@@ -6,6 +6,7 @@ use App\Azhoras\Controller\DashboardController;
 use App\Azhoras\Controller\HourBankController;
 use App\Azhoras\Controller\IndexController;
 use App\Azhoras\Controller\ManagerController;
+use App\Azhoras\Controller\ProfileController;
 
 return [
     '/' => createRoute(IndexController::class, 'index', 'GET', 'home'),
