@@ -17,6 +17,14 @@ class MicrosoftAuthService
             'tenant'                  => $_ENV['MICROSOFT_TENANT_ID'],
             'defaultEndPointVersion'  => '2.0',
         ]);
+
+        // ⚠️ Apenas em desenvolvimento — nunca em produção
+        if ($_ENV['APP_ENV'] === 'local') {
+            $httpClient = new \GuzzleHttp\Client([
+                'verify' => false,
+            ]);
+            $this->provider->setHttpClient($httpClient);
+        }
     }
 
     public function getAuthorizationUrl(): string
