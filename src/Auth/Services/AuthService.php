@@ -48,4 +48,40 @@ class AuthService
 
         return true;
     }
+
+    public function loginOrRegisterWithMicrosoft(array $microsoftUser): bool
+    {
+        $email = $microsoftUser['email'];
+        $name  = $microsoftUser['name'];
+
+        $user = $this->repository->findByEmail($email);
+
+        // Se não existe, cria automaticamente
+        if (!$user) {
+            $this->repository->save([
+                'name'      => $name,
+                'email'     => $email,
+                'password'  => password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT), // senha aleatória
+                'cpf'       => '',
+                'cargo'     => 'A definir',
+                'setor'     => 'ti',
+            ]);
+
+            $user = $this->repository->findByEmail($email);
+        }
+
+        if (!$user) {
+            return false;
+        }
+
+        $_SESSION['user_id']    = $user['id'];
+        $_SESSION['user_name']  = $user['name'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_cargo']    = $user['cargo'];
+        $_SESSION['user_setor']    = $user['setor'];
+        $_SESSION['user_role']     = $user['role'];
+        $_SESSION['profile_complete'] = $user['cargo'] !== 'A definir';
+
+        return true;
+    }
 }

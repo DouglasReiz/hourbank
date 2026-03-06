@@ -34,39 +34,39 @@ class UserRepository implements UserRepositoryInterface
     public function save(array $data): bool
     {
         $stmt = $this->pdo->prepare("
-        INSERT INTO users (name, email, password, cpf, cargo, setor)
-        VALUES (:name, :email, :password, :cpf, :cargo, :setor)
+            INSERT INTO users (name, email, password, cpf, cargo, setor)
+            VALUES (:name, :email, :password, :cpf, :cargo, :setor)
         ");
 
         return $stmt->execute([
-            ':name'      => $data['name'],
-            ':email'     => $data['email'],
-            ':password'  => $data['password'],
-            ':cpf'       => $data['cpf'],
-            ':cargo'     => $data['cargo'],
-            ':setor'     => $data['setor'],
+            ':name'     => $data['name'],
+            ':email'    => $data['email'],
+            ':password' => $data['password'],
+            ':cpf'      => $data['cpf'] ?? null,
+            ':cargo'    => $data['cargo'],
+            ':setor'    => $data['setor'],
         ]);
     }
 
     public function findAll(): array
     {
         $stmt = $this->pdo->prepare("
-        SELECT 
-            u.id,
-            u.name,
-            u.email,
-            u.cargo,
-            u.setor,
-            u.role,
-            COUNT(h.id) AS total_lancamentos,
-            SUM(CASE WHEN h.status = 'pending' THEN 1 ELSE 0 END) AS total_pendentes,
-            b.total_minutes
-        FROM users u
-        LEFT JOIN hour_bank h ON h.user_id = u.id
-        LEFT JOIN hour_bank_balance b ON b.user_id = u.id
-        GROUP BY u.id
-        ORDER BY u.name ASC
-    ");
+            SELECT 
+                u.id,
+                u.name,
+                u.email,
+                u.cargo,
+                u.setor,
+                u.role,
+                COUNT(h.id) AS total_lancamentos,
+                SUM(CASE WHEN h.status = 'pending' THEN 1 ELSE 0 END) AS total_pendentes,
+                b.total_minutes
+            FROM users u
+            LEFT JOIN hour_bank h ON h.user_id = u.id
+            LEFT JOIN hour_bank_balance b ON b.user_id = u.id
+            GROUP BY u.id
+            ORDER BY u.name ASC
+        ");
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -74,10 +74,28 @@ class UserRepository implements UserRepositoryInterface
     public function findManagers(): array
     {
         $stmt = $this->pdo->prepare("
-        SELECT id, name, email FROM users
-        WHERE role IN ('manager', 'admin')
-    ");
+            SELECT id, name, email FROM users
+            WHERE role IN ('manager', 'admin')
+        ");
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE users
+            SET cargo = :cargo,
+                setor = :setor,
+                cpf   = :cpf
+            WHERE id = :id
+        ");
+
+        return $stmt->execute([
+            ':cargo' => $data['cargo'],
+            ':setor' => $data['setor'],
+            ':cpf'   => $data['cpf'],
+            ':id'    => $id,
+        ]);
     }
 }

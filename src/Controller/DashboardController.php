@@ -20,7 +20,12 @@ class DashboardController extends AbstractController
 
     public function index(): void
     {
-        $this->middleware->handle(); // redireciona para /login se não autenticado
+        $this->middleware->handle();
+
+        // Redireciona para completar perfil se necessário
+        if (empty($_SESSION['profile_complete'])) {
+            $this->redirect('/profile/complete');
+        }
 
         $userId  = $_SESSION['user_id'];
 

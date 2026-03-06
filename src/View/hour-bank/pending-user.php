@@ -68,7 +68,7 @@
                                 </form>
                                 <form method="POST" action="/hour-bank/reject">
                                     <input type="hidden" name="id" value="<?= $entry['id'] ?>">
-                                    <input type="hidden" name="redirect" value="/hour-bank/pending/user/<?= $user['id'] ?>">
+                                    <input type="hidden" name="redirect" value="/hour-bank/pending/user/<?= $userId ?>">
                                     <button type="submit" class="btn btn-secondary btn-sm"
                                         style="color:#ef4444;border-color:#ef4444;">
                                         ✘ Rejeitar

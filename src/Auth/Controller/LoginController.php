@@ -4,6 +4,7 @@ namespace App\Azhoras\Auth\Controller;
 
 use App\Azhoras\Controller\AbstractController;
 use App\Azhoras\Auth\Services\AuthService;
+use App\Azhoras\Auth\Services\MicrosoftAuthService;
 use App\Azhoras\Http\RequestHandler;
 
 class LoginController extends AbstractController
@@ -11,6 +12,7 @@ class LoginController extends AbstractController
     public function __construct(
         RequestHandler           $request,
         private readonly AuthService $authService,
+        private readonly MicrosoftAuthService $microsoftAuthService,
     ) {
         parent::__construct($request);
     }
@@ -20,20 +22,30 @@ class LoginController extends AbstractController
         $this->render('auth/loginPage');
     }
 
-    public function store(): void
+    // Redireciona para a tela de login da Microsoft
+    public function microsoftRedirect(): void
     {
-        $data = $this->request->all();
+        $url = $this->microsoftAuthService->getAuthorizationUrl();
+        $this->redirect($url);
+    }
 
-        if (empty($data['email']) || empty($data['password'])) {
-            $this->render('auth/loginPage', ['errors' => ['Preencha todos os campos.']]);
+    // Callback após login na Microsoft
+    public function microsoftCallback(): void
+    {
+        $code  = $this->request->get('code');
+        $state = $this->request->get('state');
+
+        if (!$code) {
+            $this->render('auth/loginPage', ['errors' => ['Login com Microsoft cancelado.']]);
             return;
         }
 
         try {
-            $success = $this->authService->login($data['email'], $data['password']);
+            $microsoftUser = $this->microsoftAuthService->handleCallback($code, $state);
+            $success       = $this->authService->loginOrRegisterWithMicrosoft($microsoftUser);
 
             if (!$success) {
-                $this->render('auth/loginPage', ['errors' => ['E-mail ou senha inválidos.']]);
+                $this->render('auth/loginPage', ['errors' => ['Não foi possível autenticar com a Microsoft.']]);
                 return;
             }
 

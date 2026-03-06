@@ -16,6 +16,9 @@ return [
     '/logout' => createRoute(LoginController::class, 'logout', 'GET', 'logout'),
     '/dashboard' => createRoute(DashboardController::class, 'index', 'GET', 'dashboard'),
 
+    '/profile/complete'       => createRoute(ProfileController::class, 'index',  'GET',  'profile.complete'),
+    '/profile/complete/store' => createRoute(ProfileController::class, 'store',  'POST', 'profile.complete.store'),
+
     //Rotas do banco de horas
 
     '/hour-bank'         => createRoute(HourBankController::class, 'index',   'GET',  'hour-bank'),
@@ -27,4 +30,9 @@ return [
     //Rota de Gestor
     '/manager/users' => createRoute(ManagerController::class, 'users', 'GET', 'manager.users'),
     '/hour-bank/pending/user/{user_id}' => createRoute(HourBankController::class, 'pendingByUser', 'GET', 'hour-bank.pending.user'),
+
+    //Login Microsoft
+    '/auth/microsoft'          => createRoute(LoginController::class, 'microsoftRedirect',  'GET', 'auth.microsoft'),
+    '/auth/microsoft/callback' => createRoute(LoginController::class, 'microsoftCallback',  'GET', 'auth.microsoft.callback'),
+
 ];
